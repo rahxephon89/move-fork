@@ -14,8 +14,14 @@ use move_model::{
 };
 
 use crate::{
-    abi_signature::ABIJsonSignature, attributes, context::Context, functions::FunctionGenerator,
-    solidity_ty::SoliditySignature, yul_functions::YulFunction, Options,
+    abi_move_metadata,
+    abi_signature::{from_event_sig, from_solidity_sig},
+    attributes,
+    context::Context,
+    functions::FunctionGenerator,
+    solidity_ty::SoliditySignature,
+    yul_functions::YulFunction,
+    Options,
 };
 
 use crate::context::Contract;
@@ -185,6 +191,25 @@ impl Generator {
         });
         // Generate JSON-ABI
         self.generate_abi_string(ctx);
+        let metadata = abi_move_metadata::generate_abi_move_metadata(ctx);
+        let move_sig_opt = abi_move_metadata::parse_metadata_to_move_sig(&metadata);
+        if let Some(move_sig) = move_sig_opt {
+            println!("move sig");
+            for (ev, abi_sig) in move_sig.event_map {
+                println!("ev:{}", ev);
+                println!(
+                    "ev_abi_sig:{}",
+                    serde_json::to_string_pretty(&abi_sig).unwrap()
+                );
+            }
+            for (fun, abi_sig) in move_sig.func_map {
+                println!("fun:{}", fun);
+                println!(
+                    "fun_abi_sig:{}",
+                    serde_json::to_string_pretty(&abi_sig).unwrap()
+                );
+            }
+        }
     }
 
     /// Generate JSON-ABI
@@ -197,26 +222,18 @@ impl Generator {
             .cloned()
             .collect_vec();
         for sig in &event_sigs {
-            res.push(serde_json::to_string_pretty(&ABIJsonSignature::from_event_sig(sig)).unwrap());
+            res.push(serde_json::to_string_pretty(&from_event_sig(sig)).unwrap());
         }
         for (sig, attr) in &self.solidity_sigs {
             res.push(
-                serde_json::to_string_pretty(&ABIJsonSignature::from_solidity_sig(
-                    sig,
-                    Some(*attr),
-                    "function",
-                ))
-                .unwrap(),
+                serde_json::to_string_pretty(&from_solidity_sig(sig, Some(*attr), "function"))
+                    .unwrap(),
             );
         }
         if let Some(constructor) = &self.constructor_sig {
             res.push(
-                serde_json::to_string_pretty(&ABIJsonSignature::from_solidity_sig(
-                    constructor,
-                    None,
-                    "constructor",
-                ))
-                .unwrap(),
+                serde_json::to_string_pretty(&from_solidity_sig(constructor, None, "constructor"))
+                    .unwrap(),
             );
         }
         emitln!(ctx.abi_writer, "[");

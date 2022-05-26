@@ -17,6 +17,7 @@ move-stackless-bytecode = { path = "../../move-prover/bytecode" }
 move-ir-types = { path = "../../move-ir/types" }
 move-core-types = { path = "../../move-core/types" }
 move-compiler = { path = "../../move-compiler" }
+move-abi = { path = "../move-abi" }
 
 
 # external dependencies

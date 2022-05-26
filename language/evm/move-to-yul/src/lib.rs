@@ -4,6 +4,7 @@
 
 #![forbid(unsafe_code)]
 
+mod abi_move_metadata;
 mod abi_native_functions;
 mod abi_signature;
 mod attributes;

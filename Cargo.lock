@@ -2106,6 +2106,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "move-abi"
+version = "0.1.0"
+dependencies = [
+ "serde 1.0.130",
+ "serde_json",
+]
+
+[[package]]
 name = "move-abigen"
 version = "0.1.0"
 dependencies = [
@@ -2794,6 +2802,7 @@ dependencies = [
  "itertools 0.10.1",
  "log",
  "maplit",
+ "move-abi",
  "move-binary-format",
  "move-command-line-common",
  "move-compiler",

@@ -87,6 +87,7 @@ impl Generator {
                 let sig = self.get_solidity_signature(ctx, fun, true);
                 if let Some(fun_attr_opt) = attributes::construct_fun_attribute(fun) {
                     self.solidity_sigs.push((sig.clone(), fun_attr_opt));
+                    ctx.build_callable_signature_map(&sig, fun_attr_opt, fun);
                 } else {
                     ctx.env.error(
                         &fun.get_loc(),
