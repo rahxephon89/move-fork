@@ -541,6 +541,13 @@ fn type_name_to_ident_tokens(env: &GlobalEnv, ty: &Type) -> Vec<TypeIdentToken> 
         Type::Primitive(PrimitiveType::Num)
         | Type::Primitive(PrimitiveType::Range)
         | Type::Primitive(PrimitiveType::EventStore)
+        | Type::Primitive(PrimitiveType::Bv8)
+        | Type::Primitive(PrimitiveType::Bv16)
+        | Type::Primitive(PrimitiveType::Bv32)
+        | Type::Primitive(PrimitiveType::Bv64)
+        | Type::Primitive(PrimitiveType::Bv128)
+        | Type::Primitive(PrimitiveType::Bv256)
+        | Type::Primitive(PrimitiveType::Bv512)
         | Type::Fun(..)
         | Type::TypeDomain(..)
         | Type::ResourceDomain(..) => {
@@ -597,6 +604,13 @@ fn type_name_to_info_pack(env: &GlobalEnv, ty: &Type) -> Option<TypeInfoPack> {
         }
         // spec only types
         Type::Primitive(PrimitiveType::Num)
+        | Type::Primitive(PrimitiveType::Bv8)
+        | Type::Primitive(PrimitiveType::Bv16)
+        | Type::Primitive(PrimitiveType::Bv32)
+        | Type::Primitive(PrimitiveType::Bv64)
+        | Type::Primitive(PrimitiveType::Bv128)
+        | Type::Primitive(PrimitiveType::Bv256)
+        | Type::Primitive(PrimitiveType::Bv512)
         | Type::Primitive(PrimitiveType::Range)
         | Type::Primitive(PrimitiveType::EventStore)
         | Type::Fun(..)

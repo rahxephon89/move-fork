@@ -337,7 +337,7 @@ impl SolidityType {
                 U128 => SolidityType::Primitive(SolidityPrimitiveType::Uint(128)),
                 Address => SolidityType::Primitive(SolidityPrimitiveType::Address(false)),
                 Signer => SolidityType::Primitive(SolidityPrimitiveType::Address(false)),
-                Num | Range | EventStore => {
+                _ => {
                     panic!("unexpected field type")
                 }
             },
