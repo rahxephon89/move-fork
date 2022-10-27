@@ -61,6 +61,13 @@ pub enum PrimitiveType {
     Num,
     Range,
     EventStore,
+    Bv8,
+    Bv16,
+    Bv32,
+    Bv64,
+    Bv128,
+    Bv256,
+    Bv512,
 }
 
 /// A type substitution.
@@ -82,7 +89,7 @@ impl PrimitiveType {
         use PrimitiveType::*;
         match self {
             Bool | U8 | U16 | U32 | U64 | U128 | U256 | Address | Signer => false,
-            Num | Range | EventStore => true,
+            Num | Range | EventStore | Bv8 | Bv16 | Bv32 | Bv64 | Bv128 | Bv256 | Bv512 => true,
         }
     }
 
@@ -99,7 +106,9 @@ impl PrimitiveType {
             U256 => MType::U256,
             Address => MType::Address,
             Signer => MType::Signer,
-            Num | Range | EventStore => return None,
+            Num | Range | EventStore | Bv8 | Bv16 | Bv32 | Bv64 | Bv128 | Bv256 | Bv512 => {
+                return None
+            }
         })
     }
 }
@@ -1285,6 +1294,13 @@ impl fmt::Display for PrimitiveType {
             Range => f.write_str("range"),
             Num => f.write_str("num"),
             EventStore => f.write_str("estore"),
+            Bv8 => f.write_str("bv8"),
+            Bv16 => f.write_str("bv16"),
+            Bv32 => f.write_str("bv32"),
+            Bv64 => f.write_str("bv64"),
+            Bv128 => f.write_str("bv128"),
+            Bv256 => f.write_str("bv256"),
+            Bv512 => f.write_str("bv512"),
         }
     }
 }

@@ -20,4 +20,30 @@ pub struct ModelBuilderOptions {
 
     /// List of simplification passes and the order each pass to be executed
     pub simplification_pipeline: Vec<SimplificationPass>,
+
+    /// Options for choosing representation of unsigned integer types in the prover.
+    pub num_repr: NumRepresentation,
+}
+
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, Default)]
+pub enum NumRepresentation {
+    #[default]
+    Int,
+    Bv,
+    Auto,
+}
+
+impl NumRepresentation {
+    pub fn integer_representation(self) -> bool {
+        use NumRepresentation::*;
+        matches!(self, Int)
+    }
+    pub fn bv_representation(self) -> bool {
+        use NumRepresentation::*;
+        matches!(self, Bv)
+    }
+    pub fn auto_representation(self) -> bool {
+        use NumRepresentation::*;
+        matches!(self, Auto)
+    }
 }
