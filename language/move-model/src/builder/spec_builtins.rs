@@ -29,6 +29,12 @@ pub(crate) fn declare_spec_builtins(trans: &mut ModelBuilder<'_>) {
         value: Value::Number(value),
     };
 
+    let mk_num_const_bv = |value: BigInt, ty: &Type| ConstEntry {
+        loc: loc.clone(),
+        ty: ty.clone(),
+        value: Value::Number(value),
+    };
+
     {
         // Constants
         trans.define_const(
@@ -36,24 +42,54 @@ pub(crate) fn declare_spec_builtins(trans: &mut ModelBuilder<'_>) {
             mk_num_const(BigInt::from(u8::MAX)),
         );
         trans.define_const(
+            trans.builtin_qualified_symbol("MAX_BV8"),
+            mk_num_const_bv(BigInt::from(u8::MAX), &Type::new_prim(PrimitiveType::Bv8)),
+        );
+        trans.define_const(
             trans.builtin_qualified_symbol("MAX_U16"),
             mk_num_const(BigInt::from(u16::MAX)),
+        );
+        trans.define_const(
+            trans.builtin_qualified_symbol("MAX_BV16"),
+            mk_num_const_bv(BigInt::from(u16::MAX), &Type::new_prim(PrimitiveType::Bv16)),
         );
         trans.define_const(
             trans.builtin_qualified_symbol("MAX_U32"),
             mk_num_const(BigInt::from(u32::MAX)),
         );
         trans.define_const(
+            trans.builtin_qualified_symbol("MAX_BV32"),
+            mk_num_const_bv(BigInt::from(u32::MAX), &Type::new_prim(PrimitiveType::Bv32)),
+        );
+        trans.define_const(
             trans.builtin_qualified_symbol("MAX_U64"),
             mk_num_const(BigInt::from(u64::MAX)),
+        );
+        trans.define_const(
+            trans.builtin_qualified_symbol("MAX_BV64"),
+            mk_num_const_bv(BigInt::from(u64::MAX), &Type::new_prim(PrimitiveType::Bv64)),
         );
         trans.define_const(
             trans.builtin_qualified_symbol("MAX_U128"),
             mk_num_const(BigInt::from(u128::MAX)),
         );
         trans.define_const(
+            trans.builtin_qualified_symbol("MAX_BV128"),
+            mk_num_const_bv(
+                BigInt::from(u128::MAX),
+                &Type::new_prim(PrimitiveType::Bv128),
+            ),
+        );
+        trans.define_const(
             trans.builtin_qualified_symbol("MAX_U256"),
             mk_num_const(BigInt::from(&U256::max_value())),
+        );
+        trans.define_const(
+            trans.builtin_qualified_symbol("MAX_BV256"),
+            mk_num_const_bv(
+                BigInt::from(&U256::max_value()),
+                &Type::new_prim(PrimitiveType::Bv256),
+            ),
         );
         trans.define_const(
             trans.builtin_qualified_symbol("EXECUTION_FAILURE"),

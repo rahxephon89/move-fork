@@ -67,6 +67,7 @@ use crate::{
         PropertyValue, Spec, SpecBlockInfo, SpecFunDecl, SpecVarDecl, Value,
     },
     intrinsics::IntrinsicsAnnotation,
+    options::{ModelBuilderOptions, NumRepresentation},
     pragmas::{
         DELEGATE_INVARIANTS_TO_CALLER_PRAGMA, DISABLE_INVARIANTS_IN_BODY_PRAGMA, FRIEND_PRAGMA,
         INTRINSIC_PRAGMA, OPAQUE_PRAGMA, VERIFY_PRAGMA,
@@ -572,6 +573,15 @@ impl GlobalEnv {
             stdlib_address: None,
             extlib_address: None,
         }
+    }
+
+    pub fn bv_flag(&self) -> bool {
+        matches!(
+            self.get_extension::<ModelBuilderOptions>()
+                .unwrap_or_default()
+                .num_repr,
+            NumRepresentation::Bv
+        )
     }
 
     /// Creates a display container for the given value. There must be an implementation
@@ -2191,12 +2201,48 @@ impl<'env> ModuleEnv<'env> {
     pub fn globalize_signature(&self, sig: &SignatureToken) -> Type {
         match sig {
             SignatureToken::Bool => Type::Primitive(PrimitiveType::Bool),
-            SignatureToken::U8 => Type::Primitive(PrimitiveType::U8),
-            SignatureToken::U16 => Type::Primitive(PrimitiveType::U16),
-            SignatureToken::U32 => Type::Primitive(PrimitiveType::U32),
-            SignatureToken::U64 => Type::Primitive(PrimitiveType::U64),
-            SignatureToken::U128 => Type::Primitive(PrimitiveType::U128),
-            SignatureToken::U256 => Type::Primitive(PrimitiveType::U256),
+            SignatureToken::U8 => {
+                if self.env.bv_flag() {
+                    Type::Primitive(PrimitiveType::Bv8)
+                } else {
+                    Type::Primitive(PrimitiveType::U8)
+                }
+            }
+            SignatureToken::U16 => {
+                if self.env.bv_flag() {
+                    Type::Primitive(PrimitiveType::Bv16)
+                } else {
+                    Type::Primitive(PrimitiveType::U16)
+                }
+            }
+            SignatureToken::U32 => {
+                if self.env.bv_flag() {
+                    Type::Primitive(PrimitiveType::Bv32)
+                } else {
+                    Type::Primitive(PrimitiveType::U32)
+                }
+            }
+            SignatureToken::U64 => {
+                if self.env.bv_flag() {
+                    Type::Primitive(PrimitiveType::Bv64)
+                } else {
+                    Type::Primitive(PrimitiveType::U64)
+                }
+            }
+            SignatureToken::U128 => {
+                if self.env.bv_flag() {
+                    Type::Primitive(PrimitiveType::Bv128)
+                } else {
+                    Type::Primitive(PrimitiveType::U128)
+                }
+            }
+            SignatureToken::U256 => {
+                if self.env.bv_flag() {
+                    Type::Primitive(PrimitiveType::Bv256)
+                } else {
+                    Type::Primitive(PrimitiveType::U256)
+                }
+            }
             SignatureToken::Address => Type::Primitive(PrimitiveType::Address),
             SignatureToken::Signer => Type::Primitive(PrimitiveType::Signer),
             SignatureToken::Reference(t) => {
