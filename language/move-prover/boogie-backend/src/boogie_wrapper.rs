@@ -22,6 +22,7 @@ use pretty::RcDoc;
 use regex::Regex;
 
 use move_binary_format::file_format::FunctionDefinitionIndex;
+use move_command_line_common::parser::parse_u256;
 use move_model::{
     ast::TempIndex,
     code_writer::CodeWriter,
@@ -1382,15 +1383,54 @@ impl ModelValue {
                 "{}u8",
                 self.extract_literal().and_then(|s| s.parse::<u8>().ok())?
             ))),
+            Type::Primitive(PrimitiveType::Bv8) => Some(PrettyDoc::text(format!(
+                "{}bv8",
+                self.extract_literal().and_then(|s| s.parse::<u8>().ok())?
+            ))),
+            Type::Primitive(PrimitiveType::U16) => Some(PrettyDoc::text(format!(
+                "{}u16",
+                self.extract_literal().and_then(|s| s.parse::<u16>().ok())?
+            ))),
+            Type::Primitive(PrimitiveType::Bv16) => Some(PrettyDoc::text(format!(
+                "{}bv16",
+                self.extract_literal().and_then(|s| s.parse::<u16>().ok())?
+            ))),
+            Type::Primitive(PrimitiveType::U32) => Some(PrettyDoc::text(format!(
+                "{}u32",
+                self.extract_literal().and_then(|s| s.parse::<u32>().ok())?
+            ))),
+            Type::Primitive(PrimitiveType::Bv32) => Some(PrettyDoc::text(format!(
+                "{}bv32",
+                self.extract_literal().and_then(|s| s.parse::<u32>().ok())?
+            ))),
             Type::Primitive(PrimitiveType::U64) => Some(PrettyDoc::text(
                 self.extract_literal()
                     .and_then(|s| s.parse::<u64>().ok())?
                     .to_string(),
             )),
+            Type::Primitive(PrimitiveType::Bv64) => Some(PrettyDoc::text(format!(
+                "{}bv64",
+                self.extract_literal().and_then(|s| s.parse::<u64>().ok())?
+            ))),
             Type::Primitive(PrimitiveType::U128) => Some(PrettyDoc::text(format!(
                 "{}u128",
                 self.extract_literal()
                     .and_then(|s| s.parse::<u128>().ok())?
+            ))),
+            Type::Primitive(PrimitiveType::Bv128) => Some(PrettyDoc::text(format!(
+                "{}bv128",
+                self.extract_literal()
+                    .and_then(|s| s.parse::<u128>().ok())?
+            ))),
+            Type::Primitive(PrimitiveType::U256) => Some(PrettyDoc::text(format!(
+                "{}u256",
+                self.extract_literal()
+                    .map(|s| parse_u256(s).ok().unwrap().0)?
+            ))),
+            Type::Primitive(PrimitiveType::Bv256) => Some(PrettyDoc::text(format!(
+                "{}bv256",
+                self.extract_literal()
+                    .map(|s| parse_u256(s).ok().unwrap().0)?
             ))),
             Type::Primitive(PrimitiveType::Num) => Some(PrettyDoc::text(format!(
                 "{}num",

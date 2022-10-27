@@ -191,7 +191,16 @@ pub fn boogie_type(env: &GlobalEnv, ty: &Type) -> String {
             U8 | U16 | U32 | U64 | U128 | U256 | Num | Address => "int".to_string(),
             Signer => "$signer".to_string(),
             Bool => "bool".to_string(),
-            Range | EventStore => panic!("unexpected type"),
+            Bv8 => "bv8".to_string(),
+            Bv16 => "bv16".to_string(),
+            Bv32 => "bv32".to_string(),
+            Bv64 => "bv64".to_string(),
+            Bv128 => "bv128".to_string(),
+            Bv256 => "bv256".to_string(),
+            Bv512 => "bv512".to_string(),
+            Range | EventStore => {
+                panic!("unexpected type")
+            }
         },
         Vector(et) => format!("Vec ({})", boogie_type(env, et)),
         Struct(mid, sid, inst) => boogie_struct_name(&env.get_module(*mid).into_struct(*sid), inst),
@@ -232,6 +241,13 @@ pub fn boogie_type_suffix(env: &GlobalEnv, ty: &Type) -> String {
             Signer => "signer".to_string(),
             Bool => "bool".to_string(),
             Range => "range".to_string(),
+            Bv8 => "bv8".to_string(),
+            Bv16 => "bv16".to_string(),
+            Bv32 => "bv32".to_string(),
+            Bv64 => "bv64".to_string(),
+            Bv128 => "bv128".to_string(),
+            Bv256 => "bv256".to_string(),
+            Bv512 => "bv512".to_string(),
             EventStore => format!("<<unsupported {:?}>>", ty),
         },
         Vector(et) => format!("vec{}", boogie_inst_suffix(env, &[et.as_ref().to_owned()])),
@@ -547,6 +563,13 @@ fn type_name_to_ident_tokens(env: &GlobalEnv, ty: &Type) -> Vec<TypeIdentToken> 
         Type::Primitive(PrimitiveType::Num)
         | Type::Primitive(PrimitiveType::Range)
         | Type::Primitive(PrimitiveType::EventStore)
+        | Type::Primitive(PrimitiveType::Bv8)
+        | Type::Primitive(PrimitiveType::Bv16)
+        | Type::Primitive(PrimitiveType::Bv32)
+        | Type::Primitive(PrimitiveType::Bv64)
+        | Type::Primitive(PrimitiveType::Bv128)
+        | Type::Primitive(PrimitiveType::Bv256)
+        | Type::Primitive(PrimitiveType::Bv512)
         | Type::Fun(..)
         | Type::TypeDomain(..)
         | Type::ResourceDomain(..) => {
@@ -606,6 +629,13 @@ fn type_name_to_info_pack(env: &GlobalEnv, ty: &Type) -> Option<TypeInfoPack> {
         }
         // spec only types
         Type::Primitive(PrimitiveType::Num)
+        | Type::Primitive(PrimitiveType::Bv8)
+        | Type::Primitive(PrimitiveType::Bv16)
+        | Type::Primitive(PrimitiveType::Bv32)
+        | Type::Primitive(PrimitiveType::Bv64)
+        | Type::Primitive(PrimitiveType::Bv128)
+        | Type::Primitive(PrimitiveType::Bv256)
+        | Type::Primitive(PrimitiveType::Bv512)
         | Type::Primitive(PrimitiveType::Range)
         | Type::Primitive(PrimitiveType::EventStore)
         | Type::Fun(..)

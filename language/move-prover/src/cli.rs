@@ -27,7 +27,9 @@ use move_abigen::AbigenOptions;
 use move_docgen::DocgenOptions;
 use move_errmapgen::ErrmapOptions;
 use move_model::{
-    model::VerificationScope, options::ModelBuilderOptions, simplifier::SimplificationPass,
+    model::VerificationScope,
+    options::{ModelBuilderOptions, NumRepresentation},
+    simplifier::SimplificationPass,
 };
 use move_prover_boogie_backend::options::{BoogieOptions, VectorTheory};
 use move_stackless_bytecode::options::{AutoTraceLevel, ProverOptions};
@@ -530,6 +532,12 @@ impl Options {
                     .help("For each script function which is verification target, \
                     print out the names of all called functions, directly or indirectly.")
             )
+            .arg(
+                Arg::new("num-repr")
+                    .long("num-repr")
+                    .possible_values(&["int", "bv", "auto"])
+                    .help("specify how numbers are encoded in the prover backend.")
+            )
             .after_help("More options available via `--config file` or `--config-str str`. \
             Use `--print-config` to see format and current values. \
             See `move-prover/src/cli.rs::Option` for documentation.");
@@ -773,6 +781,15 @@ impl Options {
 
         if matches.is_present("script-reach") {
             options.script_reach = true;
+        }
+
+        if matches.is_present("num-repr") {
+            options.model_builder.num_repr = match matches.value_of("num-repr").unwrap() {
+                "int" => NumRepresentation::Int,
+                "bv" => NumRepresentation::Bv,
+                "auto" => NumRepresentation::Auto,
+                _ => unreachable!("should not happen"),
+            }
         }
 
         options.backend.derive_options();

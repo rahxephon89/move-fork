@@ -96,6 +96,193 @@ function {:inline} $IsEqual'bool'(x: bool, y: bool): bool {
     x == y
 }
 
+const $MAX_BV8: bv8;
+axiom $MAX_BV8 == 255bv8;
+
+const $MAX_BV16: bv16;
+axiom $MAX_BV16 == 65535bv16;
+
+const $MAX_BV32: bv32;
+axiom $MAX_BV32 == 2147483647bv32;
+
+const $MAX_BV64: bv64;
+axiom $MAX_BV64 == 18446744073709551615bv64;
+
+const $MAX_BV128: bv128;
+axiom $MAX_BV128 == 340282366920938463463374607431768211455bv128;
+
+const $MAX_BV256: bv256;
+axiom $MAX_BV256 == 115792089237316195423570985008687907853269984665640564039457584007913129639935bv256;
+
+
+function $IsValid'bv8'(v: bv8): bool {
+  $Ge'Bv8'(v,0bv8) && $Le'Bv8'(v,$MAX_BV8)
+}
+
+function $IsValid'bv16'(v: bv16): bool {
+  $Ge'Bv16'(v,0bv16) && $Le'Bv16'(v,$MAX_BV16)
+}
+
+function $IsValid'bv32'(v: bv32): bool {
+  $Ge'Bv32'(v,0bv32) && $Le'Bv32'(v,$MAX_BV32)
+}
+
+function $IsValid'bv64'(v: bv64): bool {
+  $Ge'Bv64'(v,0bv64) && $Le'Bv64'(v,$MAX_BV64)
+}
+
+function $IsValid'bv128'(v: bv128): bool {
+  $Ge'Bv128'(v,0bv128) && $Le'Bv128'(v,$MAX_BV128)
+}
+
+function $IsValid'bv256'(v: bv256): bool {
+  $Ge'Bv256'(v,0bv256) && $Le'Bv256'(v,$MAX_BV256)
+}
+
+function $IsValid'bv512'(v: bv512): bool {
+  true
+}
+
+function {:inline} $IsEqual'bv8'(x: bv8, y: bv8): bool {
+    x == y
+}
+
+function {:inline} $IsEqual'bv16'(x: bv16, y: bv16): bool {
+    x == y
+}
+
+function {:inline} $IsEqual'bv32'(x: bv32, y: bv32): bool {
+    x == y
+}
+
+function {:inline} $IsEqual'bv64'(x: bv64, y: bv64): bool {
+    x == y
+}
+
+function {:inline} $IsEqual'bv128'(x: bv128, y: bv128): bool {
+    x == y
+}
+
+function {:inline} $IsEqual'bv256'(x: bv256, y: bv256): bool {
+    x == y
+}
+
+function {:inline} $IsEqual'bv512'(x: bv512, y: bv512): bool {
+    x == y
+}
+
+function {:bvbuiltin "bvand"} $And'Bv8'(bv8,bv8) returns(bv8);
+function {:bvbuiltin "bvand"} $And'Bv16'(bv16,bv16) returns(bv16);
+function {:bvbuiltin "bvand"} $And'Bv32'(bv32,bv32) returns(bv32);
+function {:bvbuiltin "bvand"} $And'Bv64'(bv64,bv64) returns(bv64);
+function {:bvbuiltin "bvand"} $And'Bv128'(bv128,bv128) returns(bv128);
+function {:bvbuiltin "bvand"} $And'Bv256'(bv256,bv256) returns(bv256);
+function {:bvbuiltin "bvand"} $And'Bv512'(bv512,bv512) returns(bv512);
+
+function {:bvbuiltin "bvor"} $Or'Bv8'(bv8,bv8) returns(bv8);
+function {:bvbuiltin "bvor"} $Or'Bv16'(bv16,bv16) returns(bv16);
+function {:bvbuiltin "bvor"} $Or'Bv32'(bv32,bv32) returns(bv32);
+function {:bvbuiltin "bvor"} $Or'Bv64'(bv64,bv64) returns(bv64);
+function {:bvbuiltin "bvor"} $Or'Bv128'(bv128,bv128) returns(bv128);
+function {:bvbuiltin "bvor"} $Or'Bv256'(bv256,bv256) returns(bv256);
+function {:bvbuiltin "bvor"} $Or'Bv512'(bv512,bv512) returns(bv512);
+
+function {:bvbuiltin "bvxor"} $Xor'Bv8'(bv8,bv8) returns(bv8);
+function {:bvbuiltin "bvxor"} $Xor'Bv16'(bv16,bv16) returns(bv16);
+function {:bvbuiltin "bvxor"} $Xor'Bv32'(bv32,bv32) returns(bv32);
+function {:bvbuiltin "bvxor"} $Xor'Bv64'(bv64,bv64) returns(bv64);
+function {:bvbuiltin "bvxor"} $Xor'Bv128'(bv128,bv128) returns(bv128);
+function {:bvbuiltin "bvxor"} $Xor'Bv256'(bv256,bv256) returns(bv256);
+function {:bvbuiltin "bvxor"} $Xor'Bv512'(bv512,bv512) returns(bv512);
+
+function {:bvbuiltin "bvadd"} $Add'Bv8'(bv8,bv8) returns(bv8);
+function {:bvbuiltin "bvadd"} $Add'Bv16'(bv16,bv16) returns(bv16);
+function {:bvbuiltin "bvadd"} $Add'Bv32'(bv32,bv32) returns(bv32);
+function {:bvbuiltin "bvadd"} $Add'Bv64'(bv64,bv64) returns(bv64);
+function {:bvbuiltin "bvadd"} $Add'Bv128'(bv128,bv128) returns(bv128);
+function {:bvbuiltin "bvadd"} $Add'Bv256'(bv256,bv256) returns(bv256);
+function {:bvbuiltin "bvadd"} $Add'Bv512'(bv512,bv512) returns(bv512);
+
+function {:bvbuiltin "bvsub"} $Sub'Bv8'(bv8,bv8) returns(bv8);
+function {:bvbuiltin "bvsub"} $Sub'Bv16'(bv16,bv16) returns(bv16);
+function {:bvbuiltin "bvsub"} $Sub'Bv32'(bv32,bv32) returns(bv32);
+function {:bvbuiltin "bvsub"} $Sub'Bv64'(bv64,bv64) returns(bv64);
+function {:bvbuiltin "bvsub"} $Sub'Bv128'(bv128,bv128) returns(bv128);
+function {:bvbuiltin "bvsub"} $Sub'Bv256'(bv256,bv256) returns(bv256);
+function {:bvbuiltin "bvsub"} $Sub'Bv512'(bv512,bv512) returns(bv512);
+
+function {:bvbuiltin "bvmul"} $Mul'Bv8'(bv8,bv8) returns(bv8);
+function {:bvbuiltin "bvmul"} $Mul'Bv16'(bv16,bv16) returns(bv16);
+function {:bvbuiltin "bvmul"} $Mul'Bv32'(bv32,bv32) returns(bv32);
+function {:bvbuiltin "bvmul"} $Mul'Bv64'(bv64,bv64) returns(bv64);
+function {:bvbuiltin "bvmul"} $Mul'Bv128'(bv128,bv128) returns(bv128);
+function {:bvbuiltin "bvmul"} $Mul'Bv256'(bv256,bv256) returns(bv256);
+function {:bvbuiltin "bvmul"} $Mul'Bv512'(bv512,bv512) returns(bv512);
+
+function {:bvbuiltin "bvudiv"} $Div'Bv8'(bv8,bv8) returns(bv8);
+function {:bvbuiltin "bvudiv"} $Div'Bv16'(bv16,bv16) returns(bv16);
+function {:bvbuiltin "bvudiv"} $Div'Bv32'(bv32,bv32) returns(bv32);
+function {:bvbuiltin "bvudiv"} $Div'Bv64'(bv64,bv64) returns(bv64);
+function {:bvbuiltin "bvudiv"} $Div'Bv128'(bv128,bv128) returns(bv128);
+function {:bvbuiltin "bvudiv"} $Div'Bv256'(bv256,bv256) returns(bv256);
+function {:bvbuiltin "bvudiv"} $Div'Bv512'(bv512,bv512) returns(bv512);
+
+function {:bvbuiltin "bvurem"} $Mod'Bv8'(bv8,bv8) returns(bv8);
+function {:bvbuiltin "bvurem"} $Mod'Bv16'(bv16,bv16) returns(bv16);
+function {:bvbuiltin "bvurem"} $Mod'Bv32'(bv32,bv32) returns(bv32);
+function {:bvbuiltin "bvurem"} $Mod'Bv64'(bv64,bv64) returns(bv64);
+function {:bvbuiltin "bvurem"} $Mod'Bv128'(bv128,bv128) returns(bv128);
+function {:bvbuiltin "bvurem"} $Mod'Bv256'(bv256,bv256) returns(bv256);
+function {:bvbuiltin "bvurem"} $Mod'Bv512'(bv512,bv512) returns(bv512);
+
+function {:bvbuiltin "bvshl"} $Shl'Bv8'(bv8,bv8) returns(bv8);
+function {:bvbuiltin "bvshl"} $Shl'Bv16'(bv16,bv16) returns(bv16);
+function {:bvbuiltin "bvshl"} $Shl'Bv32'(bv32,bv32) returns(bv32);
+function {:bvbuiltin "bvshl"} $Shl'Bv64'(bv64,bv64) returns(bv64);
+function {:bvbuiltin "bvshl"} $Shl'Bv128'(bv128,bv128) returns(bv128);
+function {:bvbuiltin "bvshl"} $Shl'Bv256'(bv256,bv256) returns(bv256);
+function {:bvbuiltin "bvshl"} $Shl'Bv512'(bv512,bv512) returns(bv512);
+
+function {:bvbuiltin "bvshr"} $Shr'Bv8'(bv8,bv8) returns(bv8);
+function {:bvbuiltin "bvshr"} $Shr'Bv16'(bv16,bv16) returns(bv16);
+function {:bvbuiltin "bvshr"} $Shr'Bv32'(bv32,bv32) returns(bv32);
+function {:bvbuiltin "bvshr"} $Shr'Bv64'(bv64,bv64) returns(bv64);
+function {:bvbuiltin "bvshr"} $Shr'Bv128'(bv128,bv128) returns(bv128);
+function {:bvbuiltin "bvshr"} $Shr'Bv256'(bv256,bv256) returns(bv256);
+function {:bvbuiltin "bvshr"} $Shr'Bv512'(bv512,bv512) returns(bv512);
+
+function {:bvbuiltin "bvult"} $Lt'Bv8'(bv8,bv8) returns(bool);
+function {:bvbuiltin "bvult"} $Lt'Bv16'(bv16,bv16) returns(bool);
+function {:bvbuiltin "bvult"} $Lt'Bv32'(bv32,bv32) returns(bool);
+function {:bvbuiltin "bvult"} $Lt'Bv64'(bv64,bv64) returns(bool);
+function {:bvbuiltin "bvult"} $Lt'Bv128'(bv128,bv128) returns(bool);
+function {:bvbuiltin "bvult"} $Lt'Bv256'(bv256,bv256) returns(bool);
+function {:bvbuiltin "bvult"} $Lt'Bv512'(bv512,bv512) returns(bool);
+
+function {:bvbuiltin "bvule"} $Le'Bv8'(bv8,bv8) returns(bool);
+function {:bvbuiltin "bvule"} $Le'Bv16'(bv16,bv16) returns(bool);
+function {:bvbuiltin "bvule"} $Le'Bv32'(bv32,bv32) returns(bool);
+function {:bvbuiltin "bvule"} $Le'Bv64'(bv64,bv64) returns(bool);
+function {:bvbuiltin "bvule"} $Le'Bv128'(bv128,bv128) returns(bool);
+function {:bvbuiltin "bvule"} $Le'Bv256'(bv256,bv256) returns(bool);
+function {:bvbuiltin "bvule"} $Le'Bv512'(bv512,bv512) returns(bool);
+
+function {:bvbuiltin "bvugt"} $Gt'Bv8'(bv8,bv8) returns(bool);
+function {:bvbuiltin "bvugt"} $Gt'Bv16'(bv16,bv16) returns(bool);
+function {:bvbuiltin "bvugt"} $Gt'Bv32'(bv32,bv32) returns(bool);
+function {:bvbuiltin "bvugt"} $Gt'Bv64'(bv64,bv64) returns(bool);
+function {:bvbuiltin "bvugt"} $Gt'Bv128'(bv128,bv128) returns(bool);
+function {:bvbuiltin "bvugt"} $Gt'Bv256'(bv256,bv256) returns(bool);
+function {:bvbuiltin "bvugt"} $Gt'Bv512'(bv512,bv512) returns(bool);
+
+function {:bvbuiltin "bvuge"} $Ge'Bv8'(bv8,bv8) returns(bool);
+function {:bvbuiltin "bvuge"} $Ge'Bv16'(bv16,bv16) returns(bool);
+function {:bvbuiltin "bvuge"} $Ge'Bv32'(bv32,bv32) returns(bool);
+function {:bvbuiltin "bvuge"} $Ge'Bv64'(bv64,bv64) returns(bool);
+function {:bvbuiltin "bvuge"} $Ge'Bv128'(bv128,bv128) returns(bool);
+function {:bvbuiltin "bvuge"} $Ge'Bv256'(bv256,bv256) returns(bool);
+function {:bvbuiltin "bvuge"} $Ge'Bv512'(bv512,bv512) returns(bool);
+
 // ============================================================================================
 // Memory
 

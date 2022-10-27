@@ -113,6 +113,13 @@ impl SpecPrinter<'_> {
             // these types can't be declared in move/spec language
             Type::Primitive(PrimitiveType::Range) => Self::doc("<range>"),
             Type::Primitive(PrimitiveType::EventStore) => Self::doc("<event-store>"),
+            Type::Primitive(PrimitiveType::Bv8) => Self::doc("bv8"),
+            Type::Primitive(PrimitiveType::Bv16) => Self::doc("bv16"),
+            Type::Primitive(PrimitiveType::Bv32) => Self::doc("bv32"),
+            Type::Primitive(PrimitiveType::Bv64) => Self::doc("bv64"),
+            Type::Primitive(PrimitiveType::Bv128) => Self::doc("bv128"),
+            Type::Primitive(PrimitiveType::Bv256) => Self::doc("bv256"),
+            Type::Primitive(PrimitiveType::Bv512) => Self::doc("bv512"),
             Type::Var(idx) => Self::doc(format!("<var-{}>", *idx)),
             Type::Error => Self::doc("<error>"),
         }

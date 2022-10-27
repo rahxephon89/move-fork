@@ -23,6 +23,7 @@ use crate::{
         module_builder::ModuleBuilder,
     },
     model::{FieldId, Loc, ModuleId, NodeId, QualifiedId, SpecFunId, StructId},
+    options::{ModelBuilderOptions, NumRepresentation},
     symbol::{Symbol, SymbolPool},
     ty::{PrimitiveType, Substitution, Type, TypeDisplayContext, Variance, BOOL_TYPE},
 };
@@ -61,6 +62,8 @@ pub(crate) struct ExpTranslator<'env, 'translator, 'module_translator> {
     pub errors_generated: RefCell<bool>,
     /// Set containing all the functions called during translation.
     pub called_spec_funs: BTreeSet<(ModuleId, SpecFunId)>,
+    /// Representation of numbers
+    pub num_repr: NumRepresentation,
 }
 
 #[derive(Debug, PartialEq)]
@@ -75,6 +78,12 @@ pub(crate) enum OldExpStatus {
 impl<'env, 'translator, 'module_translator> ExpTranslator<'env, 'translator, 'module_translator> {
     pub fn new(parent: &'module_translator mut ModuleBuilder<'env, 'translator>) -> Self {
         let node_counter_start = parent.parent.env.next_free_node_number();
+        let num_repr = parent
+            .parent
+            .env
+            .get_extension::<ModelBuilderOptions>()
+            .unwrap_or_default()
+            .num_repr;
         Self {
             parent,
             type_params_table: BTreeMap::new(),
@@ -91,6 +100,7 @@ impl<'env, 'translator, 'module_translator> ExpTranslator<'env, 'translator, 'mo
             translating_fun_as_spec_fun: false,
             errors_generated: RefCell::new(false),
             called_spec_funs: BTreeSet::new(),
+            num_repr,
         }
     }
 
@@ -555,12 +565,48 @@ impl<'env, 'translator, 'module_translator> ExpTranslator<'env, 'translator, 'mo
                     Builtin(builtin_type_name) => match &builtin_type_name.value {
                         Address => Type::new_prim(PrimitiveType::Address),
                         Signer => Type::new_prim(PrimitiveType::Signer),
-                        U8 => Type::new_prim(PrimitiveType::U8),
-                        U16 => Type::new_prim(PrimitiveType::U16),
-                        U32 => Type::new_prim(PrimitiveType::U32),
-                        U64 => Type::new_prim(PrimitiveType::U64),
-                        U128 => Type::new_prim(PrimitiveType::U128),
-                        U256 => Type::new_prim(PrimitiveType::U256),
+                        U8 => {
+                            if self.bv_flag() {
+                                Type::new_prim(PrimitiveType::Bv8)
+                            } else {
+                                Type::new_prim(PrimitiveType::U8)
+                            }
+                        }
+                        U16 => {
+                            if self.bv_flag() {
+                                Type::new_prim(PrimitiveType::Bv16)
+                            } else {
+                                Type::new_prim(PrimitiveType::U16)
+                            }
+                        }
+                        U32 => {
+                            if self.bv_flag() {
+                                Type::new_prim(PrimitiveType::Bv32)
+                            } else {
+                                Type::new_prim(PrimitiveType::U32)
+                            }
+                        }
+                        U64 => {
+                            if self.bv_flag() {
+                                Type::new_prim(PrimitiveType::Bv64)
+                            } else {
+                                Type::new_prim(PrimitiveType::U64)
+                            }
+                        }
+                        U128 => {
+                            if self.bv_flag() {
+                                Type::new_prim(PrimitiveType::Bv128)
+                            } else {
+                                Type::new_prim(PrimitiveType::U128)
+                            }
+                        }
+                        U256 => {
+                            if self.bv_flag() {
+                                Type::new_prim(PrimitiveType::Bv256)
+                            } else {
+                                Type::new_prim(PrimitiveType::U256)
+                            }
+                        }
                         Vector => Type::Vector(Box::new(self.translate_hlir_base_type(&args[0]))),
                         Bool => Type::new_prim(PrimitiveType::Bool),
                     },
@@ -604,6 +650,66 @@ impl<'env, 'translator, 'module_translator> ExpTranslator<'env, 'translator, 'mo
             .collect()
     }
 
+    fn bv_flag(&self) -> bool {
+        matches!(self.num_repr, NumRepresentation::Bv)
+    }
+
+    pub fn translate_arithmetic_type_str(&self, ty_str: &str) -> Type {
+        let bv_flag = self.bv_flag();
+        match ty_str {
+            "u8" => {
+                if bv_flag {
+                    Type::new_prim(PrimitiveType::Bv8)
+                } else {
+                    Type::new_prim(PrimitiveType::U8)
+                }
+            }
+            "u16" => {
+                if bv_flag {
+                    Type::new_prim(PrimitiveType::Bv16)
+                } else {
+                    Type::new_prim(PrimitiveType::U16)
+                }
+            }
+            "u32" => {
+                if bv_flag {
+                    Type::new_prim(PrimitiveType::Bv32)
+                } else {
+                    Type::new_prim(PrimitiveType::U32)
+                }
+            }
+            "u64" => {
+                if bv_flag {
+                    Type::new_prim(PrimitiveType::Bv64)
+                } else {
+                    Type::new_prim(PrimitiveType::U64)
+                }
+            }
+            "u128" => {
+                if bv_flag {
+                    Type::new_prim(PrimitiveType::Bv128)
+                } else {
+                    Type::new_prim(PrimitiveType::U128)
+                }
+            }
+            "u256" => {
+                if bv_flag {
+                    Type::new_prim(PrimitiveType::Bv256)
+                } else {
+                    Type::new_prim(PrimitiveType::U256)
+                }
+            }
+            "num" => {
+                if bv_flag {
+                    Type::new_prim(PrimitiveType::Bv256)
+                } else {
+                    Type::new_prim(PrimitiveType::U256)
+                }
+            }
+            _ => Type::Error,
+        }
+    }
+
     /// Translates a source AST type into a target AST type.
     pub fn translate_type(&mut self, ty: &EA::Type) -> Type {
         use EA::Type_::*;
@@ -623,17 +729,12 @@ impl<'env, 'translator, 'module_translator> ExpTranslator<'env, 'translator, 'mo
                         "bool" => {
                             return check_zero_args(self, Type::new_prim(PrimitiveType::Bool));
                         }
-                        "u8" => return check_zero_args(self, Type::new_prim(PrimitiveType::U8)),
-                        "u16" => return check_zero_args(self, Type::new_prim(PrimitiveType::U16)),
-                        "u32" => return check_zero_args(self, Type::new_prim(PrimitiveType::U32)),
-                        "u64" => return check_zero_args(self, Type::new_prim(PrimitiveType::U64)),
-                        "u128" => {
-                            return check_zero_args(self, Type::new_prim(PrimitiveType::U128));
+                        "u8" | "u16" | "u32" | "u64" | "u128" | "u256" | "num" => {
+                            return check_zero_args(
+                                self,
+                                self.translate_arithmetic_type_str(n.value.as_str()),
+                            )
                         }
-                        "u256" => {
-                            return check_zero_args(self, Type::new_prim(PrimitiveType::U256))
-                        }
-                        "num" => return check_zero_args(self, Type::new_prim(PrimitiveType::Num)),
                         "range" => {
                             return check_zero_args(self, Type::new_prim(PrimitiveType::Range));
                         }
@@ -846,27 +947,51 @@ impl<'env, 'translator, 'module_translator> ExpTranslator<'env, 'translator, 'mo
             }
             EA::Value_::U8(x) => Some((
                 Value::Number(BigInt::from_u8(*x).unwrap()),
-                Type::new_prim(PrimitiveType::U8),
+                if self.bv_flag() {
+                    Type::new_prim(PrimitiveType::Bv8)
+                } else {
+                    Type::new_prim(PrimitiveType::U8)
+                },
             )),
             EA::Value_::U16(x) => Some((
                 Value::Number(BigInt::from_u16(*x).unwrap()),
-                Type::new_prim(PrimitiveType::U16),
+                if self.bv_flag() {
+                    Type::new_prim(PrimitiveType::Bv16)
+                } else {
+                    Type::new_prim(PrimitiveType::U16)
+                },
             )),
             EA::Value_::U32(x) => Some((
                 Value::Number(BigInt::from_u32(*x).unwrap()),
-                Type::new_prim(PrimitiveType::U32),
+                if self.bv_flag() {
+                    Type::new_prim(PrimitiveType::Bv32)
+                } else {
+                    Type::new_prim(PrimitiveType::U32)
+                },
             )),
             EA::Value_::U64(x) => Some((
                 Value::Number(BigInt::from_u64(*x).unwrap()),
-                Type::new_prim(PrimitiveType::U64),
+                if self.bv_flag() {
+                    Type::new_prim(PrimitiveType::Bv64)
+                } else {
+                    Type::new_prim(PrimitiveType::U64)
+                },
             )),
             EA::Value_::U128(x) => Some((
                 Value::Number(BigInt::from_u128(*x).unwrap()),
-                Type::new_prim(PrimitiveType::U128),
+                if self.bv_flag() {
+                    Type::new_prim(PrimitiveType::Bv128)
+                } else {
+                    Type::new_prim(PrimitiveType::U128)
+                },
             )),
             EA::Value_::InferredNum(x) | EA::Value_::U256(x) => Some((
                 Value::Number(BigInt::from(x)),
-                Type::new_prim(PrimitiveType::U256),
+                if self.bv_flag() {
+                    Type::new_prim(PrimitiveType::Bv256)
+                } else {
+                    Type::new_prim(PrimitiveType::U256)
+                },
             )),
             EA::Value_::Bool(x) => Some((Value::Bool(*x), Type::new_prim(PrimitiveType::Bool))),
             EA::Value_::Bytearray(x) => {

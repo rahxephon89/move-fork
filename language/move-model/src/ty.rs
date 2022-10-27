@@ -61,6 +61,13 @@ pub enum PrimitiveType {
     U16,
     U32,
     U256,
+    Bv8,
+    Bv16,
+    Bv32,
+    Bv64,
+    Bv128,
+    Bv256,
+    Bv512,
 }
 
 /// A type substitution.
@@ -82,7 +89,7 @@ impl PrimitiveType {
         use PrimitiveType::*;
         match self {
             Bool | U8 | U16 | U32 | U64 | U128 | U256 | Address | Signer => false,
-            Num | Range | EventStore => true,
+            Num | Range | EventStore | Bv8 | Bv16 | Bv32 | Bv64 | Bv128 | Bv256 | Bv512 => true,
         }
     }
 
@@ -99,7 +106,9 @@ impl PrimitiveType {
             U256 => MType::U256,
             Address => MType::Address,
             Signer => MType::Signer,
-            Num | Range | EventStore => return None,
+            Num | Range | EventStore | Bv8 | Bv16 | Bv32 | Bv64 | Bv128 | Bv256 | Bv512 => {
+                return None
+            }
         })
     }
 }
@@ -188,6 +197,23 @@ impl Type {
         }
         false
     }
+
+    /// Returns true if this is any number type.
+    pub fn is_bv_number(&self) -> bool {
+        if let Type::Primitive(p) = self {
+            if let PrimitiveType::Bv8
+            | PrimitiveType::Bv16
+            | PrimitiveType::Bv32
+            | PrimitiveType::Bv64
+            | PrimitiveType::Bv128
+            | PrimitiveType::Bv256 = p
+            {
+                return true;
+            }
+        }
+        false
+    }
+
     /// Returns true if this is an address or signer type.
     pub fn is_signer_or_address(&self) -> bool {
         matches!(
@@ -442,12 +468,48 @@ impl Type {
         use Type::*;
         match t {
             TypeTag::Bool => Primitive(PrimitiveType::Bool),
-            TypeTag::U8 => Primitive(PrimitiveType::U8),
-            TypeTag::U16 => Primitive(PrimitiveType::U8),
-            TypeTag::U32 => Primitive(PrimitiveType::U8),
-            TypeTag::U64 => Primitive(PrimitiveType::U64),
-            TypeTag::U128 => Primitive(PrimitiveType::U128),
-            TypeTag::U256 => Primitive(PrimitiveType::U8),
+            TypeTag::U8 => {
+                if env.bv_flag() {
+                    Primitive(PrimitiveType::Bv8)
+                } else {
+                    Primitive(PrimitiveType::U8)
+                }
+            }
+            TypeTag::U16 => {
+                if env.bv_flag() {
+                    Primitive(PrimitiveType::Bv16)
+                } else {
+                    Primitive(PrimitiveType::U16)
+                }
+            }
+            TypeTag::U32 => {
+                if env.bv_flag() {
+                    Primitive(PrimitiveType::Bv32)
+                } else {
+                    Primitive(PrimitiveType::U32)
+                }
+            }
+            TypeTag::U64 => {
+                if env.bv_flag() {
+                    Primitive(PrimitiveType::Bv64)
+                } else {
+                    Primitive(PrimitiveType::U64)
+                }
+            }
+            TypeTag::U128 => {
+                if env.bv_flag() {
+                    Primitive(PrimitiveType::Bv128)
+                } else {
+                    Primitive(PrimitiveType::U128)
+                }
+            }
+            TypeTag::U256 => {
+                if env.bv_flag() {
+                    Primitive(PrimitiveType::Bv256)
+                } else {
+                    Primitive(PrimitiveType::U256)
+                }
+            }
             TypeTag::Address => Primitive(PrimitiveType::Address),
             TypeTag::Signer => Primitive(PrimitiveType::Signer),
             TypeTag::Struct(s) => {
@@ -1291,6 +1353,13 @@ impl fmt::Display for PrimitiveType {
             Range => f.write_str("range"),
             Num => f.write_str("num"),
             EventStore => f.write_str("estore"),
+            Bv8 => f.write_str("bv8"),
+            Bv16 => f.write_str("bv16"),
+            Bv32 => f.write_str("bv32"),
+            Bv64 => f.write_str("bv64"),
+            Bv128 => f.write_str("bv128"),
+            Bv256 => f.write_str("bv256"),
+            Bv512 => f.write_str("bv512"),
         }
     }
 }

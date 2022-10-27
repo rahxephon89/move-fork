@@ -532,7 +532,10 @@ impl<'env> SpecTranslator<'env> {
             // Emit min constraint
             if info.kind == QuantKind::ChooseMin {
                 // Check whether we support min on the range type.
-                if !result_ty.is_number() && !result_ty.is_signer_or_address() {
+                if !result_ty.is_number()
+                    && !result_ty.is_signer_or_address()
+                    && !result_ty.is_bv_number()
+                {
                     env.error(
                         &env.get_node_loc(info.node_id),
                         "The min choice can only be applied to numbers, addresses, or signers",
