@@ -155,7 +155,7 @@ module std::option {
         vector::borrow_mut(&mut t.vec, 0)
     }
     spec borrow_mut {
-        pragma opaque;
+        // pragma opaque;
         include AbortsIfNone<Element>;
         ensures result == borrow(t);
         ensures t == old(t);

@@ -46,10 +46,15 @@ const VECTOR_SMT_ARRAY_EXT_THEORY: &[u8] =
     include_bytes!("prelude/vector-smt-array-ext-theory.bpl");
 const MULTISET_ARRAY_THEORY: &[u8] = include_bytes!("prelude/multiset-array-theory.bpl");
 const TABLE_ARRAY_THEORY: &[u8] = include_bytes!("prelude/table-array-theory.bpl");
+const AGGREGATOR_TEMPLATE: &[u8] = include_bytes!("prelude/aggregator.bpl");
+const AGGREGATOR_FACTORY_TEMPLATE: &[u8] = include_bytes!("prelude/aggregator-factory.bpl");
+
 
 // TODO use named addresses
 const BCS_MODULE: &str = "0x1::bcs";
 const EVENT_MODULE: &str = "0x1::event";
+const AGGREGATOR_STRUCT: &str = "aggregator::Aggregator";
+const AGGREGATOR_FACTORY_STRUCT: &str = "aggregator_factory::AggregatorFactory";
 
 mod boogie_helpers;
 pub mod boogie_wrapper;
@@ -149,6 +154,8 @@ pub fn add_prelude(
         templ("prelude", PRELUDE_TEMPLATE),
         // Add the basic array theory to make it available for inclusion in other theories.
         templ("vector-array-theory", VECTOR_ARRAY_THEORY),
+        templ("aggregator", AGGREGATOR_TEMPLATE),
+        templ("aggregator-factory", AGGREGATOR_FACTORY_TEMPLATE),
     ];
 
     // Bind the chosen vector and multiset theory
@@ -162,6 +169,8 @@ pub fn add_prelude(
     templates.push(templ("vector-theory", vector_theory));
     templates.push(templ("multiset-theory", MULTISET_ARRAY_THEORY));
     templates.push(templ("table-theory", TABLE_ARRAY_THEORY));
+    templates.push(templ("aggregator", AGGREGATOR_TEMPLATE));
+    templates.push(templ("aggregator-factory", AGGREGATOR_FACTORY_TEMPLATE));
 
     let mut context = Context::new();
     context.insert("options", options);
@@ -273,6 +282,14 @@ pub fn add_prelude(
     context.insert("bcs_instances", &bcs_instances);
     let event_instances = filter_native_ensure_one_inst(EVENT_MODULE);
     context.insert("event_instances", &event_instances);
+
+    for (id, _) in &mono_info.structs {
+        if env.get_struct(*id).get_full_name_str() == AGGREGATOR_STRUCT {
+            context.insert("aggregator", &true);
+        } else if env.get_struct(*id).get_full_name_str() == AGGREGATOR_FACTORY_STRUCT {
+            context.insert("aggregator_factory", &true);
+        }
+    }
 
     // TODO: we have defined {{std}} for adaptable resolution of stdlib addresses but
     //   not used it yet in the templates.

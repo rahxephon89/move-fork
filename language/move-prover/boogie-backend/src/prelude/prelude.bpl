@@ -1251,3 +1251,13 @@ function {:constructor} $TypeParamAddress(): $TypeParamInfo;
 function {:constructor} $TypeParamSigner(): $TypeParamInfo;
 function {:constructor} $TypeParamVector(e: $TypeParamInfo): $TypeParamInfo;
 function {:constructor} $TypeParamStruct(a: int, m: Vec int, s: Vec int): $TypeParamInfo;
+
+// ============================================================================================
+// Aggregator and Aggregator Factory
+{%- if aggregator -%}
+{% include "aggregator" %}
+{%- endif %}
+
+{%- if aggregator -%}
+{% include "aggregator-factory" %}
+{%- endif %}
